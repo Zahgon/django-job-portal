@@ -9,8 +9,6 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView
-from weasyprint import HTML, CSS
-from weasyprint.text.fonts import FontConfiguration
 
 from jobsapp.decorators import user_is_employee
 
@@ -119,70 +117,3 @@ class UserResumeListView(ListView):
 
     def get_queryset(self):
         return self.model.objects.filter(user_id=self.request.user.id).order_by("-id")
-
-
-@login_required
-@user_is_employee
-def download_resume(request, id):
-    resume = ResumeCv.objects.get(id=id)
-    if resume:
-        # Font is not working in pdf
-        font_config = FontConfiguration()
-        css = CSS(
-            string=f"""
-                    @font-face {{
-                        font-family: "Font Awesome 5 Brands";
-                        font-style: normal;
-                        font-weight: 400;
-                        src: url("{static('webfonts/fa-brands-400.eot')}");
-                        src: url("{static('webfonts/fa-brands-400.eot?#iefix')}") format("embedded-opentype"),
-                             url("{static('webfonts/fa-brands-400.woff2')}") format("woff2"),
-                             url("{static('webfonts/fa-brands-400.woff')}") format("woff"),
-                             url("{static('webfonts/fa-brands-400.ttf')}") format("truetype"),
-                             url("{static('webfonts/fa-brands-400.svg#fontawesome')}") format("svg");
-                    }}
-                    @font-face {{
-                        font-family: "Font Awesome 5 Free";
-                        font-style: normal;
-                        font-weight: 400;
-                        src: url("{static('webfonts/fa-regular-400.eot')}");
-                        src: url("{static('webfonts/fa-regular-400.eot?#iefix')}") format("embedded-opentype"),
-                             url("{static('webfonts/fa-regular-400.woff2')}") format("woff2"),
-                             url("{static('webfonts/fa-regular-400.woff')}") format("woff"),
-                             url("{static('webfonts/fa-regular-400.ttf')}") format("truetype"),
-                             url("{static('webfonts/fa-regular-400.svg#fontawesome')}") format("svg");
-                    }}
-                    @font-face {{
-                        font-family: "Font Awesome 5 Free";
-                        font-style: normal;
-                        font-weight: 900;
-                        src: url("{static('webfonts/fa-solid-900.eot')}");
-                        src: url("{static('webfonts/fa-solid-900.eot?#iefix')}") format("embedded-opentype"),
-                             url("{static('webfonts/fa-solid-900.woff2')}") format("woff2"),
-                             url("{static('webfonts/fa-solid-900.woff')}") format("woff"),
-                             url("{static('webfonts/fa-solid-900.ttf')}") format("truetype"),
-                             url("{static('webfonts/fa-solid-900.svg#fontawesome')}") format("svg");
-                    }}
-                    .fa, .fas {{
-                        font-family: "Font Awesome 5 Free";
-                        font-weight: 900;
-                        font-style: normal;
-                    }}
-                    .far {{
-                        font-family: "Font Awesome 5 Free";
-                        font-weight: 400;
-                        font-style: normal;
-                    }}
-                    .fab {{
-                        font-family: "Font Awesome 5 Brands";
-                        font-weight: 400;
-                        font-style: normal;
-                    }}""",
-            font_config=font_config,
-        )
-
-        pdf_file = HTML(string=resume.content, encoding="utf-8").write_pdf(stylesheets=[css], font_config=font_config)
-        response = HttpResponse(pdf_file, content_type="application/pdf")
-        response["Content-Disposition"] = f'attachment; filename="{resume.name}.pdf"'
-        return response
-    return redirect("resume_cv:resumes")
