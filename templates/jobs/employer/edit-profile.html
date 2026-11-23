@@ -1,18 +1,17 @@
 {% extends 'base.html' %}
-{% load static %}
 {% block title %}
     Edit Profile
 {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/employer.css' %}"/>
+    <link rel="stylesheet" href="{{ static('css/employer.css') }}"/>
 {% endblock %}
 
 {% block content %}
     <section class="employer-page">
         <div class="container">
             <div class="employer-shell employer-shell--narrow">
-                <a href="{% url 'jobs:employer-dashboard' %}" class="employer-back">
+                <a href="{{ url('jobs:employer-dashboard') }}" class="employer-back">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i> Back to dashboard
                 </a>
 
@@ -36,7 +35,7 @@
                     {% endif %}
 
                     <form action="" method="post">
-                        {% csrf_token %}
+                        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                         {% for field in form %}
                             <div class="employer-field">
                                 <label for="id_{{ field.name }}">{{ field.label }}</label>
@@ -44,7 +43,7 @@
                                        class="form-control"
                                        name="{{ field.name }}"
                                        id="id_{{ field.name }}"
-                                       value="{{ field.value|default_if_none:'' }}"
+                                       value="{{ field.value|default_if_none('') }}"
                                        placeholder="{{ field.field.widget.attrs.placeholder }}">
                             </div>
                         {% endfor %}

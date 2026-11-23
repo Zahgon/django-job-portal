@@ -1,11 +1,10 @@
 {% extends 'base.html' %}
-{% load static %}
 {% block title %}
     Employee Register
 {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/auth.css' %}"/>
+    <link rel="stylesheet" href="{{ static('css/auth.css') }}"/>
 {% endblock %}
 
 {% block content %}
@@ -14,7 +13,7 @@
             <div class="auth-shell">
                 <div class="auth-card">
                     <h1>Create candidate account</h1>
-                    <p>Already registered? <a href="{% url 'accounts:login' %}">Sign in</a></p>
+                    <p>Already registered? <a href="{{ url('accounts:login') }}">Sign in</a></p>
 
                     {% if form.errors %}
                         {% for error in form.non_field_errors %}
@@ -23,7 +22,7 @@
                     {% endif %}
 
                     <form action="" method="post">
-                        {% csrf_token %}
+                        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                         {% for field in form %}
                             {% if field.name == 'gender' %}
                                 <div class="auth-field">
@@ -65,7 +64,7 @@
 
                     <p class="auth-footer">
                         Hiring instead?
-                        <a href="{% url 'accounts:employer-register' %}">Register as employer</a>
+                        <a href="{{ url('accounts:employer-register') }}">Register as employer</a>
                     </p>
                 </div>
             </div>

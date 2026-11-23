@@ -1,11 +1,10 @@
 {% extends 'base.html' %}
-{% load static %}
 {% block title %}
     Dashboard
 {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/employer.css' %}"/>
+    <link rel="stylesheet" href="{{ static('css/employer.css') }}"/>
 {% endblock %}
 
 {% block content %}
@@ -18,10 +17,10 @@
                         <p>Manage your companies and job postings from one place.</p>
                     </div>
                     <div class="employer-intro-actions">
-                        <a href="{% url 'jobs:employer-jobs-create' %}" class="employer-btn employer-btn--primary">
+                        <a href="{{ url('jobs:employer-jobs-create') }}" class="employer-btn employer-btn--primary">
                             <i class="fa fa-plus" aria-hidden="true"></i> Add position
                         </a>
-                        <a href="{% url 'jobs:company-create' %}" class="employer-btn employer-btn--secondary">
+                        <a href="{{ url('jobs:company-create') }}" class="employer-btn employer-btn--secondary">
                             <i class="fa fa-building" aria-hidden="true"></i> Create company
                         </a>
                     </div>
@@ -54,19 +53,19 @@
                                                     <img src="{{ company.logo.url }}" alt="" class="employer-company-logo">
                                                 {% endif %}
                                                 <div>
-                                                    <a href="{% url 'jobs:company-detail' company.id %}">{{ company.name }}</a>
+                                                    <a href="{{ url('jobs:company-detail', company.id) }}">{{ company.name }}</a>
                                                     {% if company.featured %}
                                                         <span class="employer-badge employer-badge--warning">Featured</span>
                                                     {% endif %}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>{{ company.industry|default:"—" }}</td>
-                                        <td>{{ company.get_size_display|default:"—" }}</td>
+                                        <td>{{ company.industry|default("—") }}</td>
+                                        <td>{{ company.get_size_display()|default("—") }}</td>
                                         <td>
                                             <div class="employer-actions">
-                                                <a href="{% url 'jobs:company-detail' company.id %}" class="employer-btn employer-btn--ghost">View</a>
-                                                <a href="{% url 'jobs:company-edit' company.id %}" class="employer-btn employer-btn--ghost">Edit</a>
+                                                <a href="{{ url('jobs:company-detail', company.id) }}" class="employer-btn employer-btn--ghost">View</a>
+                                                <a href="{{ url('jobs:company-edit', company.id) }}" class="employer-btn employer-btn--ghost">Edit</a>
                                             </div>
                                         </td>
                                     </tr>
@@ -83,7 +82,7 @@
                             <h2 id="jobs-heading">My jobs</h2>
                             <p>Openings you have posted</p>
                         </div>
-                        <a href="{% url 'jobs:employer-all-applicants' %}" class="employer-btn employer-btn--secondary employer-btn--sm">
+                        <a href="{{ url('jobs:employer-all-applicants') }}" class="employer-btn employer-btn--secondary employer-btn--sm">
                             View all applicants
                         </a>
                     </div>
@@ -106,7 +105,7 @@
                                 {% for job in jobs %}
                                     <tr>
                                         <td>
-                                            <a href="{% url 'jobs:jobs-detail' job.id %}">{{ job.title }}</a>
+                                            <a href="{{ url('jobs:jobs-detail', job.id) }}">{{ job.title }}</a>
                                             {% if job.company %}
                                                 <div class="text-muted small mt-1">{{ job.company.name }}</div>
                                             {% endif %}
@@ -115,24 +114,24 @@
                                             {% if job.filled %}
                                                 <span class="employer-badge employer-badge--success">Filled</span>
                                             {% else %}
-                                                <span class="employer-badge employer-badge--neutral">{{ job.get_status_display|default:"Open" }}</span>
+                                                <span class="employer-badge employer-badge--neutral">{{ job.get_status_display()|default("Open") }}</span>
                                             {% endif %}
                                         </td>
-                                        <td>{{ job.created_at|date:"M j, Y" }}</td>
-                                        <td>{{ job.application_deadline|date:"M j, Y" }}</td>
+                                        <td>{{ job.created_at|date("M j, Y") }}</td>
+                                        <td>{{ job.application_deadline|date("M j, Y") }}</td>
                                         <td>{{ job.vacancy }}</td>
                                         <td>
-                                            <a href="{% url 'jobs:employer-dashboard-applicants' job.id %}"
+                                            <a href="{{ url('jobs:employer-dashboard-applicants', job.id) }}"
                                                class="employer-btn employer-btn--ghost">
                                                 <i class="fa fa-users" aria-hidden="true"></i>
-                                                {{ job.applicants.count }}
+                                                {{ job.applicants|length }}
                                             </a>
                                         </td>
                                         <td>
                                             <div class="employer-actions">
-                                                <a href="{% url 'jobs:employer-jobs-edit' job.id %}" class="employer-btn employer-btn--ghost">Edit</a>
+                                                <a href="{{ url('jobs:employer-jobs-edit', job.id) }}" class="employer-btn employer-btn--ghost">Edit</a>
                                                 {% if not job.filled %}
-                                                    <a href="{% url 'jobs:job-mark-filled' job.id %}" class="employer-btn employer-btn--ghost">Mark filled</a>
+                                                    <a href="{{ url('jobs:job-mark-filled', job.id) }}" class="employer-btn employer-btn--ghost">Mark filled</a>
                                                 {% endif %}
                                             </div>
                                         </td>
@@ -145,7 +144,7 @@
                         <div class="employer-empty">
                             <h3>No jobs yet</h3>
                             <p>Post your first opening to start receiving applications.</p>
-                            <a href="{% url 'jobs:employer-jobs-create' %}" class="employer-btn employer-btn--primary">
+                            <a href="{{ url('jobs:employer-jobs-create') }}" class="employer-btn employer-btn--primary">
                                 <i class="fa fa-plus" aria-hidden="true"></i> Add position
                             </a>
                         </div>
@@ -165,11 +164,11 @@
                             {% for i in page_obj.paginator.page_range %}
                                 {% if page_obj.number == i %}
                                     <li class="page-item active"><span class="page-link">{{ i }}</span></li>
-                                {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+                                {% elif i > page_obj.number|add('-3') and i < page_obj.number|add('3') %}
                                     <li class="page-item"><a href="?page={{ i }}" class="page-link">{{ i }}</a></li>
                                 {% elif i == 1 or i == page_obj.paginator.num_pages %}
                                     <li class="page-item"><a href="?page={{ i }}" class="page-link">{{ i }}</a></li>
-                                {% elif i == page_obj.number|add:'-3' or i == page_obj.number|add:'3' %}
+                                {% elif i == page_obj.number|add('-3') or i == page_obj.number|add('3') %}
                                     <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
                                 {% endif %}
                             {% endfor %}

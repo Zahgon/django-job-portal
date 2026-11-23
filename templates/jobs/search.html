@@ -1,12 +1,10 @@
 {% extends 'base.html' %}
-{% load static %}
-{% load is_favorited %}
 {% block title %}
     Search jobs
 {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/jobs-browse.css' %}"/>
+    <link rel="stylesheet" href="{{ static('css/jobs-browse.css') }}"/>
 {% endblock %}
 
 {% block content %}
@@ -18,19 +16,19 @@
                     <p>Refine your position or location to find a better match.</p>
                 </header>
 
-                <form method="get" action="{% url 'jobs:search' %}" class="jobs-search">
+                <form method="get" action="{{ url('jobs:search') }}" class="jobs-search">
                     <div class="jobs-search-field">
                         <label for="position">Position</label>
                         <input type="text" id="position" name="position"
                                placeholder="e.g. Frontend engineer"
-                               value="{{ request.GET.position }}"
+                               value="{{ request_get.position }}"
                                class="form-control">
                     </div>
                     <div class="jobs-search-field">
                         <label for="location">Location</label>
                         <input type="text" id="location" name="location"
                                placeholder="e.g. Dhaka"
-                               value="{{ request.GET.location }}"
+                               value="{{ request_get.location }}"
                                class="form-control">
                     </div>
                     <div class="jobs-search-field">
@@ -39,7 +37,7 @@
                             <option value="">All categories</option>
                             {% for category in categories %}
                                 <option value="{{ category.id }}"
-                                    {% if request.GET.category == category.id|stringformat:"s" %} selected{% endif %}>
+                                    {% if request_get.category == category.id|stringformat("s") %} selected{% endif %}>
                                     {{ category.name }}
                                 </option>
                             {% endfor %}
@@ -66,22 +64,22 @@
 
                                 <div>
                                     <h2 class="job-card-title">
-                                        <a href="{% url 'jobs:jobs-detail' job.id %}">{{ job.title }}</a>
+                                        <a href="{{ url('jobs:jobs-detail', job.id) }}">{{ job.title }}</a>
                                     </h2>
                                     <p class="job-card-company">
-                                        <a href="{% url 'jobs:company-detail' job.company.id %}">{{ job.company.name }}</a>
+                                        <a href="{{ url('jobs:company-detail', job.company.id) }}">{{ job.company.name }}</a>
                                     </p>
                                     <p class="job-card-meta">
                                         <span><i class="fa fa-map-marker" aria-hidden="true"></i> {{ job.location }}</span>
-                                        <span>{{ job.get_type_display }}</span>
-                                        <span>{{ job.get_workplace_type_display }}</span>
+                                        <span>{{ job.get_type_display() }}</span>
+                                        <span>{{ job.get_workplace_type_display() }}</span>
                                         {% if job.category %}
                                             <span>{{ job.category.name }}</span>
                                         {% endif %}
                                     </p>
-                                    {% if job.tags.all %}
+                                    {% if job.tags %}
                                         <div class="job-tags">
-                                            {% for tag in job.tags.all %}
+                                            {% for tag in job.tags %}
                                                 <span class="job-tag">{{ tag.name }}</span>
                                             {% endfor %}
                                         </div>
@@ -90,9 +88,9 @@
 
                                 <div class="job-card-side">
                                     <p class="job-card-posted">{{ job.created_at|timesince }} ago</p>
-                                    <span class="job-badge job-badge--accent">{{ job.get_experience_level_display }}</span>
-                                    {% if user.is_authenticated and request.user.role == 'employee' %}
-                                        {% is_favorited job as is_already_favorited %}
+                                    <span class="job-badge job-badge--accent">{{ job.get_experience_level_display() }}</span>
+                                    {% if user.is_authenticated and user.role == 'employee' %}
+                                        {% set is_already_favorited = is_favorited(job) %}
                                         <a href="javascript:void(0)"
                                            data-toggle="tooltip"
                                            data-id="{{ job.id }}"
@@ -119,7 +117,7 @@
                         <ul class="pagination">
                             {% if page_obj.has_previous %}
                                 <li class="page-item">
-                                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.position %}&position={{ request.GET.position }}{% endif %}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}"
+                                    <a href="?page={{ page_obj.previous_page_number }}{% if request_get.position %}&position={{ request_get.position }}{% endif %}{% if request_get.location %}&location={{ request_get.location }}{% endif %}"
                                        class="page-link">&laquo;</a>
                                 </li>
                             {% else %}
@@ -128,23 +126,23 @@
                             {% for i in page_obj.paginator.page_range %}
                                 {% if page_obj.number == i %}
                                     <li class="page-item active"><span class="page-link">{{ i }}</span></li>
-                                {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+                                {% elif i > page_obj.number|add('-3') and i < page_obj.number|add('3') %}
                                     <li class="page-item">
-                                        <a href="?page={{ i }}{% if request.GET.position %}&position={{ request.GET.position }}{% endif %}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}"
+                                        <a href="?page={{ i }}{% if request_get.position %}&position={{ request_get.position }}{% endif %}{% if request_get.location %}&location={{ request_get.location }}{% endif %}"
                                            class="page-link">{{ i }}</a>
                                     </li>
                                 {% elif i == 1 or i == page_obj.paginator.num_pages %}
                                     <li class="page-item">
-                                        <a href="?page={{ i }}{% if request.GET.position %}&position={{ request.GET.position }}{% endif %}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}"
+                                        <a href="?page={{ i }}{% if request_get.position %}&position={{ request_get.position }}{% endif %}{% if request_get.location %}&location={{ request_get.location }}{% endif %}"
                                            class="page-link">{{ i }}</a>
                                     </li>
-                                {% elif i == page_obj.number|add:'-3' or i == page_obj.number|add:'3' %}
+                                {% elif i == page_obj.number|add('-3') or i == page_obj.number|add('3') %}
                                     <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
                                 {% endif %}
                             {% endfor %}
                             {% if page_obj.has_next %}
                                 <li class="page-item">
-                                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.position %}&position={{ request.GET.position }}{% endif %}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}"
+                                    <a href="?page={{ page_obj.next_page_number }}{% if request_get.position %}&position={{ request_get.position }}{% endif %}{% if request_get.location %}&location={{ request_get.location }}{% endif %}"
                                        class="page-link">&raquo;</a>
                                 </li>
                             {% else %}
@@ -179,7 +177,7 @@
             let that = $(this);
             $.ajax({
                 type: "POST",
-                url: "{% url 'jobs:favorite' %}",
+                url: "{{ url('jobs:favorite') }}",
                 data: {job_id},
                 success: function (res) {
                     if (res.status === "added") {

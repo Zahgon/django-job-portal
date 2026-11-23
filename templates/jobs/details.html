@@ -1,24 +1,21 @@
 {% extends 'base.html' %}
-{% load static %}
-{% load is_already_applied %}
-{% load humanize %}
 {% block title %}
     {{ job.title }}
 {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/jobs-browse.css' %}"/>
+    <link rel="stylesheet" href="{{ static('css/jobs-browse.css') }}"/>
 {% endblock %}
 
 {% block content %}
-    {% if request.user.is_authenticated and user.role == 'employee' %}
-        {% is_already_applied job request.user as is_applied %}
+    {% if user.is_authenticated and user.role == 'employee' %}
+        {% set is_applied = is_already_applied(job, user) %}
     {% endif %}
 
     <section class="jobs-page">
         <div class="container">
             <div class="jobs-shell jobs-shell--wide">
-                <a href="{% url 'jobs:jobs' %}" class="job-back">
+                <a href="{{ url('jobs:jobs') }}" class="job-back">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i> Back to jobs
                 </a>
 
@@ -28,14 +25,14 @@
                             <h1>{{ job.title }}</h1>
                             <p class="job-detail-company">
                                 at
-                                <a href="{% url 'jobs:company-detail' job.company.id %}">{{ job.company.name }}</a>
+                                <a href="{{ url('jobs:company-detail', job.company.id) }}">{{ job.company.name }}</a>
                                 · {{ job.location }}
                                 · Posted {{ job.created_at|timesince }} ago
                             </p>
                             <div class="job-detail-chips">
-                                <span class="job-badge job-badge--success">{{ job.get_type_display }}</span>
-                                <span class="job-badge job-badge--accent">{{ job.get_workplace_type_display }}</span>
-                                <span class="job-badge job-badge--neutral">{{ job.get_experience_level_display }}</span>
+                                <span class="job-badge job-badge--success">{{ job.get_type_display() }}</span>
+                                <span class="job-badge job-badge--accent">{{ job.get_workplace_type_display() }}</span>
+                                <span class="job-badge job-badge--neutral">{{ job.get_experience_level_display() }}</span>
                                 {% if job.category %}
                                     <span class="job-badge job-badge--neutral">{{ job.category.name }}</span>
                                 {% endif %}
@@ -45,7 +42,7 @@
                         <dl class="job-fact-grid">
                             <div class="job-fact">
                                 <dt>Deadline</dt>
-                                <dd>{{ job.application_deadline|date:"M j, Y" }}</dd>
+                                <dd>{{ job.application_deadline|date("M j, Y") }}</dd>
                             </div>
                             <div class="job-fact">
                                 <dt>Openings</dt>
@@ -56,13 +53,13 @@
                                 <dd>
                                     {% if job.salary > 0 %}
                                         {{ job.salary_currency }} {{ job.salary|intcomma }}
-                                        / {{ job.get_salary_period_display|default:"month" }}
+                                        / {{ job.get_salary_period_display()|default("month") }}
                                     {% elif job.salary_min or job.salary_max %}
                                         {{ job.salary_currency }}
                                         {% if job.salary_min %}{{ job.salary_min|intcomma }}{% endif %}
                                         {% if job.salary_min and job.salary_max %} – {% endif %}
                                         {% if job.salary_max %}{{ job.salary_max|intcomma }}{% endif %}
-                                        / {{ job.get_salary_period_display|default:"month" }}
+                                        / {{ job.get_salary_period_display()|default("month") }}
                                     {% else %}
                                         Negotiable
                                     {% endif %}
@@ -70,15 +67,15 @@
                             </div>
                             <div class="job-fact">
                                 <dt>Status</dt>
-                                <dd>{% if job.filled %}Filled{% else %}{{ job.get_status_display }}{% endif %}</dd>
+                                <dd>{% if job.filled %}Filled{% else %}{{ job.get_status_display() }}{% endif %}</dd>
                             </div>
                         </dl>
 
-                        {% if job.tags.all %}
+                        {% if job.tags %}
                             <div class="job-section">
                                 <h2>Skills</h2>
                                 <div class="job-tags">
-                                    {% for tag in job.tags.all %}
+                                    {% for tag in job.tags %}
                                         <span class="job-tag">{{ tag.name }}</span>
                                     {% endfor %}
                                 </div>
@@ -110,15 +107,15 @@
                             </div>
                         {% endif %}
 
-                        {% if request.user.is_authenticated and user.role == 'employee' %}
+                        {% if user.is_authenticated and user.role == 'employee' %}
                             <div class="mt-4">
                                 {% if is_applied %}
                                     <button type="button" class="jobs-btn jobs-btn--secondary jobs-btn--disabled" disabled>
                                         Already applied
                                     </button>
                                 {% else %}
-                                    <form action="{% url 'jobs:apply-job' job.id %}" method="post">
-                                        {% csrf_token %}
+                                    <form action="{{ url('jobs:apply-job', job.id) }}" method="post">
+                                        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                                         <input type="hidden" name="job" value="{{ job.id }}">
                                         <button type="submit" class="jobs-btn jobs-btn--primary">
                                             Apply for this job
@@ -132,11 +129,11 @@
                     <aside class="job-detail-aside">
                         <h2 class="job-aside-title">About {{ job.company.name }}</h2>
                         <p class="job-aside-text">
-                            {{ job.company.description|default:"No company description provided yet."|safe|truncatewords_html:60 }}
+                            {{ job.company.description|default("No company description provided yet.")|safe|truncatewords_html(60) }}
                         </p>
 
                         <div class="job-aside-links">
-                            <a href="{% url 'jobs:company-detail' job.company.id %}">
+                            <a href="{{ url('jobs:company-detail', job.company.id) }}">
                                 <i class="fa fa-building" aria-hidden="true"></i> Company profile
                             </a>
                             {% if job.website %}
@@ -150,22 +147,22 @@
                             {% endif %}
                         </div>
 
-                        {% if request.user.is_authenticated and user.role == 'employee' %}
+                        {% if user.is_authenticated and user.role == 'employee' %}
                             {% if is_applied %}
                                 <button type="button" class="jobs-btn jobs-btn--secondary jobs-btn--block jobs-btn--disabled" disabled>
                                     Already applied
                                 </button>
                             {% else %}
-                                <form action="{% url 'jobs:apply-job' job.id %}" method="post">
-                                    {% csrf_token %}
+                                <form action="{{ url('jobs:apply-job', job.id) }}" method="post">
+                                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                                     <input type="hidden" name="job" value="{{ job.id }}">
                                     <button type="submit" class="jobs-btn jobs-btn--primary jobs-btn--block">
                                         Apply for this job
                                     </button>
                                 </form>
                             {% endif %}
-                        {% elif not request.user.is_authenticated %}
-                            <a href="{% url 'accounts:login' %}" class="jobs-btn jobs-btn--primary jobs-btn--block">
+                        {% elif not user.is_authenticated %}
+                            <a href="{{ url('accounts:login') }}" class="jobs-btn jobs-btn--primary jobs-btn--block">
                                 Sign in to apply
                             </a>
                         {% endif %}

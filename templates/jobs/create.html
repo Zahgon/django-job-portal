@@ -1,15 +1,13 @@
 {% extends 'base.html' %}
-{% load static %}
-{% load tag_exists %}
 {% block title %}
     {{ title }}
 {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'vendor/bootstrap-select/css/bootstrap-select.min.css' %}">
+    <link rel="stylesheet" href="{{ static('vendor/bootstrap-select/css/bootstrap-select.min.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="{% static 'css/select2-bootstrap.css' %}"/>
-    <link rel="stylesheet" href="{% static 'css/job-form.css' %}"/>
+    <link rel="stylesheet" href="{{ static('css/select2-bootstrap.css') }}"/>
+    <link rel="stylesheet" href="{{ static('css/job-form.css') }}"/>
 {% endblock %}
 
 {% block content %}
@@ -35,7 +33,7 @@
                 {% endif %}
 
                 <form id="job-main-form" method="post" action="" class="job-add-form">
-                    {% csrf_token %}
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
                     <section class="job-form-panel" aria-labelledby="job-details-heading">
                         <div class="job-form-section-head">
@@ -51,20 +49,20 @@
                                 <label for="title">Job title</label>
                                 <input id="title" name="title" type="text" class="form-control"
                                        placeholder="e.g. Senior Frontend Engineer"
-                                       value="{{ form.title.value|default_if_none:"" }}">
+                                       value="{{ form.title.value|default_if_none("") }}">
                             </div>
 
                             <div class="job-form-field job-form-field--full">
                                 <label for="description">Job description</label>
                                 <textarea id="description" name="description" rows="5"
-                                          class="form-control">{{ form.description.value|default_if_none:"" }}</textarea>
+                                          class="form-control">{{ form.description.value|default_if_none("") }}</textarea>
                             </div>
 
                             <div class="job-form-field">
                                 <label for="salary">Salary <span class="job-form-hint">(optional if negotiable)</span></label>
                                 <input id="salary" name="salary" type="number" min="1000" class="form-control"
                                        placeholder="e.g. 50000"
-                                       value="{{ form.salary.value|default_if_none:"" }}">
+                                       value="{{ form.salary.value|default_if_none("") }}">
                             </div>
 
                             <div class="job-form-field">
@@ -72,7 +70,7 @@
                                 <select id="tags" class="js-select2 form-control" name="tags"
                                         multiple="multiple" data-placeholder="Select skills">
                                     {% for tag in tags %}
-                                        {% tag_exists tag.id form.tags.value as tag_already_exists %}
+                                        {% set tag_already_exists = tag_exists(tag.id, form.tags.value) %}
                                         <option value="{{ tag.id }}" {% if tag_already_exists %}
                                                 selected {% endif %}>{{ tag.name }}</option>
                                     {% endfor %}
@@ -84,7 +82,7 @@
                                 <input id="location" name="location" type="text"
                                        placeholder="e.g. Dhaka, Bangladesh"
                                        class="form-control"
-                                       value="{{ form.location.value|default_if_none:"" }}">
+                                       value="{{ form.location.value|default_if_none("") }}">
                             </div>
 
                             <div class="job-form-field">
@@ -102,7 +100,7 @@
                                     <option value="">Select a category</option>
                                     {% for category in categories %}
                                         <option value="{{ category.id }}"
-                                            {% if form.category.value|stringformat:"s" == category.id|stringformat:"s" %} selected{% endif %}>
+                                            {% if form.category.value|stringformat("s") == category.id|stringformat("s") %} selected{% endif %}>
                                             {{ category.name }}
                                         </option>
                                     {% endfor %}
@@ -131,7 +129,7 @@
                             <div class="job-form-field">
                                 <label for="vacancy">Openings</label>
                                 <input id="vacancy" name="vacancy" type="number" min="1" class="form-control"
-                                       value="{{ form.vacancy.value|default_if_none:"" }}">
+                                       value="{{ form.vacancy.value|default_if_none("") }}">
                             </div>
 
                             <div class="job-form-field">
@@ -166,7 +164,7 @@
                             <div class="job-form-field">
                                 <label for="id_application_deadline">Application deadline</label>
                                 <input id="id_application_deadline" name="application_deadline" type="date" class="form-control"
-                                       value="{{ form.application_deadline.value|date:'Y-m-d'|default:form.application_deadline.value }}">
+                                       value="{{ form.application_deadline.value|date('Y-m-d')|default(form.application_deadline.value) }}">
                             </div>
                         </div>
                     </section>

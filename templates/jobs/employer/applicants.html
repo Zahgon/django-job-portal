@@ -1,18 +1,17 @@
 {% extends 'base.html' %}
-{% load static %}
 {% block title %}
     Applicants
 {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/employer.css' %}"/>
+    <link rel="stylesheet" href="{{ static('css/employer.css') }}"/>
 {% endblock %}
 
 {% block content %}
     <section class="employer-page">
         <div class="container">
             <div class="employer-shell">
-                <a href="{% url 'jobs:employer-dashboard' %}" class="employer-back">
+                <a href="{{ url('jobs:employer-dashboard') }}" class="employer-back">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i> Back to dashboard
                 </a>
 
@@ -22,7 +21,7 @@
                         <p>People who applied for <strong>{{ job.title }}</strong>.</p>
                     </div>
                     <div class="employer-intro-actions">
-                        <a href="{% url 'jobs:jobs-detail' job.id %}" class="employer-btn employer-btn--secondary">
+                        <a href="{{ url('jobs:jobs-detail', job.id) }}" class="employer-btn employer-btn--secondary">
                             View job
                         </a>
                     </div>
@@ -32,11 +31,11 @@
                     <div class="employer-applicant-grid">
                         {% for applicant in applicants %}
                             <article class="employer-applicant">
-                                <img src="{% static 'img/avatar.png' %}" alt="" class="employer-applicant-avatar">
+                                <img src="{{ static('img/avatar.png') }}" alt="" class="employer-applicant-avatar">
                                 <div class="employer-applicant-body">
                                     <h2 class="employer-applicant-name">
-                                        <a href="{% url 'jobs:applied-applicant-view' applicant.job.id applicant.id %}">
-                                            {{ applicant.user.get_full_name|default:applicant.user.email }}
+                                        <a href="{{ url('jobs:applied-applicant-view', applicant.job.id, applicant.id) }}">
+                                            {{ applicant.user.get_full_name()|default(applicant.user.email) }}
                                         </a>
                                         {% if applicant.status == 1 %}
                                             <span class="employer-badge employer-badge--warning">Pending</span>
@@ -47,20 +46,20 @@
                                         {% endif %}
                                     </h2>
 
-                                    {% if applicant.user.profile.tags.all %}
+                                    {% if [] %}
                                         <div class="employer-skill-list">
-                                            {% for tag in applicant.user.profile.tags.all %}
+                                            {% for tag in [] %}
                                                 <span class="employer-skill">{{ tag.name }}</span>
                                             {% endfor %}
                                         </div>
                                     {% endif %}
 
                                     <p class="employer-applicant-meta">
-                                        Applied {{ applicant.created_at|date:"M j, Y" }}
+                                        Applied {{ applicant.created_at|date("M j, Y") }}
                                     </p>
 
                                     <div class="employer-actions">
-                                        <a href="{% url 'jobs:applied-applicant-view' applicant.job.id applicant.id %}"
+                                        <a href="{{ url('jobs:applied-applicant-view', applicant.job.id, applicant.id) }}"
                                            class="employer-btn employer-btn--ghost">
                                             Review
                                         </a>
@@ -95,11 +94,11 @@
                             {% for i in page_obj.paginator.page_range %}
                                 {% if page_obj.number == i %}
                                     <li class="page-item active"><span class="page-link">{{ i }}</span></li>
-                                {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+                                {% elif i > page_obj.number|add('-3') and i < page_obj.number|add('3') %}
                                     <li class="page-item"><a href="?page={{ i }}" class="page-link">{{ i }}</a></li>
                                 {% elif i == 1 or i == page_obj.paginator.num_pages %}
                                     <li class="page-item"><a href="?page={{ i }}" class="page-link">{{ i }}</a></li>
-                                {% elif i == page_obj.number|add:'-3' or i == page_obj.number|add:'3' %}
+                                {% elif i == page_obj.number|add('-3') or i == page_obj.number|add('3') %}
                                     <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
                                 {% endif %}
                             {% endfor %}

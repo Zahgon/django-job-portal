@@ -1,5 +1,6 @@
 #!/bin/bash
+# Bring the schema up to date, then serve the application behind gunicorn.
+set -euo pipefail
 
-#/usr/local/bin/gunicorn jobs.wsgi:application -w 2 -b :8000
-
-#gunicorn jobs.wsgi:application --bind 0.0.0.0:8000
+alembic upgrade head
+exec gunicorn app.main:app -k uvicorn.workers.UvicornWorker -w 2 -b 0.0.0.0:8000

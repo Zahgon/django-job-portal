@@ -1,14 +1,16 @@
 .DEFAULT_GOAL := dev
 
 dev:
-	python manage.py migrate && python manage.py runserver
+	alembic upgrade head && uvicorn app.main:app --reload
+
+migrate:
+	alembic upgrade head
+
+revision:
+	alembic revision -m "$(m)"
 
 test:
-	python manage.py test
+	pytest -q
 
 bi:
 	isort . && black .
-
-delete:
-	find . -path "*/migrations/*.py" -not -name "__init__.py" -delete && find . -path "*/migrations/*.pyc"  -delete
-

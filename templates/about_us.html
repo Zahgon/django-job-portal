@@ -1,12 +1,10 @@
 {% extends 'base.html' %}
-{% load static %}
-{% load i18n %}
 {% block title %}
     About Us
 {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/about.css' %}"/>
+    <link rel="stylesheet" href="{{ static('css/about.css') }}"/>
 {% endblock %}
 
 {% block content %}
@@ -50,7 +48,7 @@
 
                 <div class="about-cta">
                     <p>Ready to explore open roles or start hiring?</p>
-                    <a href="{% url 'jobs:jobs' %}" class="about-btn">Browse jobs</a>
+                    <a href="{{ url('jobs:jobs') }}" class="about-btn">Browse jobs</a>
                 </div>
             </div>
         </div>

@@ -1,11 +1,10 @@
 {% extends 'base.html' %}
-{% load static %}
 {% block title %}
     Edit Profile
 {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/employee.css' %}"/>
+    <link rel="stylesheet" href="{{ static('css/employee.css') }}"/>
 {% endblock %}
 
 {% block content %}
@@ -30,7 +29,7 @@
                     {% endif %}
 
                     <form action="" method="post">
-                        {% csrf_token %}
+                        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                         {% for field in form %}
                             {% if field.name == 'gender' %}
                                 <div class="employee-field">
@@ -55,7 +54,7 @@
                                            class="form-control"
                                            name="{{ field.name }}"
                                            id="id_{{ field.name }}"
-                                           value="{{ field.value|default_if_none:'' }}"
+                                           value="{{ field.value|default_if_none('') }}"
                                            placeholder="{{ field.field.widget.attrs.placeholder }}">
                                 </div>
                             {% endif %}

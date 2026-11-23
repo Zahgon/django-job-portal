@@ -20,7 +20,8 @@ RUN chmod +x entrypoint.sh
 
 ENV APP_HOME=/app
 ENV DEBUG=1
-RUN mkdir $APP_HOME/staticfiles
-RUN mkdir $APP_HOME/mediafiles
+RUN mkdir -p $APP_HOME/staticfiles $APP_HOME/mediafiles
+
+EXPOSE 8000
 
 CMD ["sh", "entrypoint.sh"]

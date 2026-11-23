@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
-{% load static %}
 
 {% block title %}
     My resumes
 {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/resumes.css' %}"/>
+    <link rel="stylesheet" href="{{ static('css/resumes.css') }}"/>
 {% endblock %}
 
 {% block content %}
@@ -18,7 +17,7 @@
                         <h1>My resumes</h1>
                         <p>Open a resume to keep editing, or start a new one from a template.</p>
                     </div>
-                    <a href="{% url 'resume_cv:templates' %}" class="resumes-btn resumes-btn--primary">
+                    <a href="{{ url('resume_cv:templates') }}" class="resumes-btn resumes-btn--primary">
                         <i class="fa fa-plus" aria-hidden="true"></i> Create new resume
                     </a>
                 </header>
@@ -27,7 +26,7 @@
                     <div class="resumes-grid">
                         {% for resume in resumes %}
                             <article class="resume-card">
-                                <a href="{% url 'resume_cv:builder' resume.code %}" class="resume-card-media" title="Edit {{ resume.name }}">
+                                <a href="{{ url('resume_cv:builder', resume.code) }}" class="resume-card-media" title="Edit {{ resume.name }}">
                                     {% if resume.template.thumbnail %}
                                         <img src="{{ resume.template.thumbnail.url }}" alt="">
                                     {% else %}
@@ -45,7 +44,7 @@
                                         </p>
                                     </div>
                                     <div class="resume-card-actions">
-                                        <a href="{% url 'resume_cv:builder' resume.code %}"
+                                        <a href="{{ url('resume_cv:builder', resume.code) }}"
                                            class="resumes-btn resumes-btn--primary resumes-btn--sm">
                                             Edit
                                         </a>
@@ -58,7 +57,7 @@
                     <div class="resumes-empty">
                         <h2>No resumes yet</h2>
                         <p>Choose a template to create your first resume.</p>
-                        <a href="{% url 'resume_cv:templates' %}" class="resumes-btn resumes-btn--primary">
+                        <a href="{{ url('resume_cv:templates') }}" class="resumes-btn resumes-btn--primary">
                             Browse templates
                         </a>
                     </div>

@@ -1,19 +1,17 @@
 {% extends 'base.html' %}
-{% load static %}
-{% load humanize %}
 {% block title %}
     {{ company.name }} - Company Profile
 {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/company.css' %}"/>
+    <link rel="stylesheet" href="{{ static('css/company.css') }}"/>
 {% endblock %}
 
 {% block content %}
     <section class="company-page">
         <div class="container">
             <div class="company-shell company-shell--detail">
-                <a href="{% url 'jobs:company-list' %}" class="company-back">
+                <a href="{{ url('jobs:company-list') }}" class="company-back">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i> All companies
                 </a>
 
@@ -37,7 +35,7 @@
                                 <span><i class="fa fa-industry" aria-hidden="true"></i> {{ company.industry }}</span>
                             {% endif %}
                             {% if company.size %}
-                                <span><i class="fa fa-users" aria-hidden="true"></i> {{ company.get_size_display }}</span>
+                                <span><i class="fa fa-users" aria-hidden="true"></i> {{ company.get_size_display() }}</span>
                             {% endif %}
                             {% if company.headquarters %}
                                 <span><i class="fa fa-map-marker" aria-hidden="true"></i> {{ company.headquarters }}</span>
@@ -70,16 +68,16 @@
                                         <article class="company-job">
                                             <div>
                                                 <h3>
-                                                    <a href="{% url 'jobs:jobs-detail' job.id %}">{{ job.title }}</a>
+                                                    <a href="{{ url('jobs:jobs-detail', job.id) }}">{{ job.title }}</a>
                                                 </h3>
                                                 <p class="company-job-meta">
-                                                    {{ job.location }} · {{ job.get_type_display }}
+                                                    {{ job.location }} · {{ job.get_type_display() }}
                                                     {% if job.salary > 0 %}
                                                         · {{ job.salary_currency }} {{ job.salary|intcomma }}
                                                     {% endif %}
                                                 </p>
                                             </div>
-                                            <a href="{% url 'jobs:jobs-detail' job.id %}"
+                                            <a href="{{ url('jobs:jobs-detail', job.id) }}"
                                                class="company-btn company-btn--secondary company-btn--sm">
                                                 View job
                                             </a>
@@ -104,7 +102,7 @@
                             {% if company.size %}
                                 <p class="company-aside-row">
                                     <strong>Size</strong>
-                                    {{ company.get_size_display }}
+                                    {{ company.get_size_display() }}
                                 </p>
                             {% endif %}
                             {% if company.headquarters %}
@@ -122,7 +120,7 @@
                             {% endif %}
 
                             {% if user.is_authenticated and user.role == 'employer' and user == company.user %}
-                                <a href="{% url 'jobs:company-edit' company.id %}"
+                                <a href="{{ url('jobs:company-edit', company.id) }}"
                                    class="company-btn company-btn--secondary company-btn--block company-btn--sm">
                                     <i class="fa fa-edit" aria-hidden="true"></i> Edit profile
                                 </a>

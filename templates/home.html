@@ -1,6 +1,4 @@
 {% extends 'base.html' %}
-{% load static %}
-{% load i18n %}
 {% block title %}
 Home
 {% endblock %}
@@ -347,7 +345,7 @@ Home
                 <h1>Popular Job Categories For Our <span class="highlight">Candidates</span></h1>
                 <p class="sub mb-4">Search jobs from trusted companies, filter by location and skills, and apply faster
                     with a modern job workflow.</p>
-                <form method="get" action="{% url 'jobs:search' %}" class="hero-search">
+                <form method="get" action="{{ url('jobs:search') }}" class="hero-search">
                     <div class="form-row align-items-center">
                         <div class="col-md-5 mb-2 mb-md-0">
                             <input type="text" id="profession" name="position" class="form-control"
@@ -512,7 +510,7 @@ Home
                     <h5>Future Of Job Hunting</h5>
                     <p class="text-muted mb-3">Say Goodbye To The Traditional Job Search Process And Step Into The
                         Future Of Employment Opportunities.</p>
-                    <a href="{% url 'jobs:jobs' %}" class="learn-more-link">Learn More <i
+                    <a href="{{ url('jobs:jobs') }}" class="learn-more-link">Learn More <i
                             class="fa fa-arrow-right"></i></a>
                 </div>
             </div>
@@ -524,7 +522,7 @@ Home
                     <h5>Simplify Research</h5>
                     <p class="text-muted mb-3">Save Time And Effort By Accessing A Wide Range Of Opportunities In
                         Various Industries And Career Stages.</p>
-                    <a href="{% url 'jobs:jobs' %}" class="learn-more-link">Learn More <i
+                    <a href="{{ url('jobs:jobs') }}" class="learn-more-link">Learn More <i
                             class="fa fa-arrow-right"></i></a>
                 </div>
             </div>
@@ -536,7 +534,7 @@ Home
                     <h5>Be Unique</h5>
                     <p class="text-muted mb-3">Craft A Detailed Profile That Effectively Showcases Your Unique Skills,
                         Past Experiences, And Achievements.</p>
-                    <a href="{% url 'jobs:jobs' %}" class="learn-more-link">Learn More <i
+                    <a href="{{ url('jobs:jobs') }}" class="learn-more-link">Learn More <i
                             class="fa fa-arrow-right"></i></a>
                 </div>
             </div>
@@ -582,7 +580,7 @@ Home
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="section-title-v2 mb-0">Explore <span class="accent">Featured Jobs</span></h2>
-            <a href="{% url 'jobs:jobs' %}" class="btn btn-outline-success btn-sm">View More</a>
+            <a href="{{ url('jobs:jobs') }}" class="btn btn-outline-success btn-sm">View More</a>
         </div>
         {% for job in jobs %}
         <div class="job-card-v2">
@@ -592,11 +590,11 @@ Home
                         {% if job.company.logo %}
                         <img src="{{ job.company.logo.url }}" class="company-logo mr-3" alt="{{ job.company.name }}">
                         {% else %}
-                        <img src="{% static 'img/company-1.png' %}" class="company-logo mr-3"
+                        <img src="{{ static('img/company-1.png') }}" class="company-logo mr-3"
                             alt="{{ job.company.name }}">
                         {% endif %}
                         <div>
-                            <h5 class="mb-1"><a href="{% url 'jobs:jobs-detail' job.id %}">{{ job.title }}</a></h5>
+                            <h5 class="mb-1"><a href="{{ url('jobs:jobs-detail', job.id) }}">{{ job.title }}</a></h5>
                             <div class="job-meta-v2">{{ job.company.name }} · {{ job.location }}</div>
                         </div>
                     </div>
@@ -611,11 +609,11 @@ Home
                     {% endif %}
                 </div>
                 <div class="col-md-3 text-md-right">
-                    <a href="{% url 'jobs:jobs-detail' job.id %}" class="btn btn-success btn-sm">Apply Now</a>
+                    <a href="{{ url('jobs:jobs-detail', job.id) }}" class="btn btn-success btn-sm">Apply Now</a>
                 </div>
             </div>
         </div>
-        {% empty %}
+        {% else %}
         <p class="text-muted">No jobs available right now.</p>
         {% endfor %}
     </div>
@@ -629,7 +627,7 @@ Home
         <div class="job-card-v2">
             <div class="row">
                 <div class="col-md-8">
-                    <h5 class="mb-1"><a href="{% url 'jobs:jobs-detail' trending.id %}">{{ trending.title }}</a></h5>
+                    <h5 class="mb-1"><a href="{{ url('jobs:jobs-detail', trending.id) }}">{{ trending.title }}</a></h5>
                     <div class="job-meta-v2">{{ trending.company.name }} · {{ trending.location }}</div>
                 </div>
                 <div class="col-md-4 text-md-right">
@@ -647,7 +645,7 @@ Home
         <div class="row">
             <div class="col-lg-12 text-center">
                 <p>Start searching for your new job now! </p>
-                <p><a href="{% url 'jobs:jobs' %}" class="btn btn-outline-light">See our job offers </a></p>
+                <p><a href="{{ url('jobs:jobs') }}" class="btn btn-outline-light">See our job offers </a></p>
             </div>
         </div>
     </div>
@@ -756,7 +754,7 @@ Home
                     <span class="check-icon"><i class="fa fa-check"></i></span>
                     <span>Track responses and updates from employers in one place.</span>
                 </div>
-                <a href="{% url 'jobs:jobs' %}" class="btn btn-success mt-3">Read More</a>
+                <a href="{{ url('jobs:jobs') }}" class="btn btn-success mt-3">Read More</a>
             </div>
         </div>
     </div>

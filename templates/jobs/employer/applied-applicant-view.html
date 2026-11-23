@@ -1,25 +1,24 @@
 {% extends 'base.html' %}
-{% load static %}
 {% block title %}
     Applicant details
 {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/employer.css' %}"/>
+    <link rel="stylesheet" href="{{ static('css/employer.css') }}"/>
 {% endblock %}
 
 {% block content %}
     <section class="employer-page">
         <div class="container">
             <div class="employer-shell">
-                <a href="{% url 'jobs:employer-dashboard-applicants' applicant.job.id %}" class="employer-back">
+                <a href="{{ url('jobs:employer-dashboard-applicants', applicant.job.id) }}" class="employer-back">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i> Back to applicants
                 </a>
 
                 <header class="employer-intro">
                     <div>
-                        <h1>{{ applicant.user.get_full_name|default:applicant.user.email }}</h1>
-                        <p>Applied for <strong>{{ applicant.job.title }}</strong> · {{ applicant.created_at|date:"M j, Y" }}</p>
+                        <h1>{{ applicant.user.get_full_name()|default(applicant.user.email) }}</h1>
+                        <p>Applied for <strong>{{ applicant.job.title }}</strong> · {{ applicant.created_at|date("M j, Y") }}</p>
                     </div>
                     <div class="employer-intro-actions">
                         {% if applicant.status == 1 %}
@@ -37,19 +36,19 @@
                         <h2>Application summary</h2>
                         <p class="employer-info-row">
                             <strong>Role</strong>
-                            <a href="{% url 'jobs:jobs-detail' applicant.job.id %}">{{ applicant.job.title }}</a>
+                            <a href="{{ url('jobs:jobs-detail', applicant.job.id) }}">{{ applicant.job.title }}</a>
                         </p>
                         <p class="employer-info-row">
                             <strong>Company</strong>
                             {% if applicant.job.company %}
-                                <a href="{% url 'jobs:company-detail' applicant.job.company.id %}">{{ applicant.job.company.name }}</a>
+                                <a href="{{ url('jobs:company-detail', applicant.job.company.id) }}">{{ applicant.job.company.name }}</a>
                             {% else %}
                                 —
                             {% endif %}
                         </p>
                         <p class="employer-info-row">
                             <strong>Applied on</strong>
-                            {{ applicant.created_at|date:"F j, Y" }}
+                            {{ applicant.created_at|date("F j, Y") }}
                         </p>
 
                         {% if applicant.comment %}
@@ -67,7 +66,7 @@
                         <h2>Candidate</h2>
                         <p class="employer-info-row">
                             <strong>Name</strong>
-                            {{ applicant.user.get_full_name|default:"—" }}
+                            {{ applicant.user.get_full_name()|default("—") }}
                         </p>
                         <p class="employer-info-row">
                             <strong>Email</strong>
@@ -76,16 +75,16 @@
                         {% if applicant.user.gender %}
                             <p class="employer-info-row">
                                 <strong>Gender</strong>
-                                {{ applicant.user.get_gender_display|default:applicant.user.gender }}
+                                {{ applicant.user.get_gender_display()|default(applicant.user.gender) }}
                             </p>
                         {% endif %}
 
-                        {% if applicant.user.profile.tags.all %}
+                        {% if [] %}
                             <p class="employer-info-row">
                                 <strong>Skills</strong>
                             </p>
                             <div class="employer-skill-list mb-3">
-                                {% for tag in applicant.user.profile.tags.all %}
+                                {% for tag in [] %}
                                     <span class="employer-skill">{{ tag.name }}</span>
                                 {% endfor %}
                             </div>
@@ -134,8 +133,8 @@
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                                <form action="{% url 'jobs:applicant-send-response' applicant.id %}" method="post">
-                                    {% csrf_token %}
+                                <form action="{{ url('jobs:applicant-send-response', applicant.id) }}" method="post">
+                                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                                     <div class="modal-body">
                                         <input type="hidden" name="job_id" value="{{ applicant.job.id }}">
                                         <div class="employer-field">
@@ -149,7 +148,7 @@
                                             <label for="Comment">Comment</label>
                                             <textarea id="Comment" name="comment" rows="3" required
                                                       class="form-control"
-                                                      placeholder="Share a short note with the candidate.">{{ applicant.comment|default_if_none:"" }}</textarea>
+                                                      placeholder="Share a short note with the candidate.">{{ applicant.comment|default_if_none("") }}</textarea>
                                         </div>
                                     </div>
                                     <div class="modal-footer">

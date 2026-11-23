@@ -1,11 +1,10 @@
 {% extends 'base.html' %}
-{% load static %}
 {% block title %}
     Companies
 {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/company.css' %}"/>
+    <link rel="stylesheet" href="{{ static('css/company.css') }}"/>
 {% endblock %}
 
 {% block content %}
@@ -24,19 +23,19 @@
                         <label for="industry">Industry</label>
                         <input type="text" id="industry" name="industry"
                                placeholder="e.g. Technology"
-                               value="{{ request.GET.industry }}"
+                               value="{{ request_get.industry }}"
                                class="form-control">
                     </div>
                     <button type="submit" class="company-btn company-btn--primary">
                         <i class="fa fa-search" aria-hidden="true"></i> Search
                     </button>
-                    <a href="{% url 'jobs:company-featured' %}" class="company-btn company-btn--secondary">
+                    <a href="{{ url('jobs:company-featured') }}" class="company-btn company-btn--secondary">
                         Featured
                     </a>
                 </form>
 
                 <p class="company-count">
-                    Showing <strong>{{ companies|length }}</strong> compan{{ companies|length|pluralize:"y,ies" }}
+                    Showing <strong>{{ companies|length }}</strong> compan{{ companies|length|pluralize("y,ies") }}
                     {% if is_paginated %}on this page{% endif %}
                 </p>
 
@@ -54,12 +53,12 @@
                                     {% endif %}
                                     <div>
                                         <h2>
-                                            <a href="{% url 'jobs:company-detail' company.id %}">{{ company.name }}</a>
+                                            <a href="{{ url('jobs:company-detail', company.id) }}">{{ company.name }}</a>
                                         </h2>
                                         <p class="company-card-meta">
                                             {% if company.industry %}{{ company.industry }}{% endif %}
                                             {% if company.industry and company.size %} · {% endif %}
-                                            {% if company.size %}{{ company.get_size_display }}{% endif %}
+                                            {% if company.size %}{{ company.get_size_display() }}{% endif %}
                                         </p>
                                         {% if company.featured %}
                                             <span class="company-badge company-badge--featured">Featured</span>
@@ -67,11 +66,11 @@
                                     </div>
                                 </div>
                                 {% if company.description %}
-                                    <p class="company-card-desc">{{ company.description|truncatewords:22 }}</p>
+                                    <p class="company-card-desc">{{ company.description|truncatewords(22) }}</p>
                                 {% else %}
                                     <p class="company-card-desc">No description provided yet.</p>
                                 {% endif %}
-                                <a href="{% url 'jobs:company-detail' company.id %}"
+                                <a href="{{ url('jobs:company-detail', company.id) }}"
                                    class="company-btn company-btn--secondary company-btn--sm">
                                     View profile
                                 </a>
@@ -81,7 +80,7 @@
                 {% else %}
                     <div class="company-empty">
                         <h2>No companies found</h2>
-                        <p>{% if request.GET.industry %}Try another industry filter.{% else %}Company profiles will appear here when employers create them.{% endif %}</p>
+                        <p>{% if request_get.industry %}Try another industry filter.{% else %}Company profiles will appear here when employers create them.{% endif %}</p>
                     </div>
                 {% endif %}
 
@@ -90,7 +89,7 @@
                         <ul class="pagination">
                             {% if page_obj.has_previous %}
                                 <li class="page-item">
-                                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.industry %}&industry={{ request.GET.industry }}{% endif %}"
+                                    <a href="?page={{ page_obj.previous_page_number }}{% if request_get.industry %}&industry={{ request_get.industry }}{% endif %}"
                                        class="page-link">&laquo;</a>
                                 </li>
                             {% else %}
@@ -99,23 +98,23 @@
                             {% for i in page_obj.paginator.page_range %}
                                 {% if page_obj.number == i %}
                                     <li class="page-item active"><span class="page-link">{{ i }}</span></li>
-                                {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+                                {% elif i > page_obj.number|add('-3') and i < page_obj.number|add('3') %}
                                     <li class="page-item">
-                                        <a href="?page={{ i }}{% if request.GET.industry %}&industry={{ request.GET.industry }}{% endif %}"
+                                        <a href="?page={{ i }}{% if request_get.industry %}&industry={{ request_get.industry }}{% endif %}"
                                            class="page-link">{{ i }}</a>
                                     </li>
                                 {% elif i == 1 or i == page_obj.paginator.num_pages %}
                                     <li class="page-item">
-                                        <a href="?page={{ i }}{% if request.GET.industry %}&industry={{ request.GET.industry }}{% endif %}"
+                                        <a href="?page={{ i }}{% if request_get.industry %}&industry={{ request_get.industry }}{% endif %}"
                                            class="page-link">{{ i }}</a>
                                     </li>
-                                {% elif i == page_obj.number|add:'-3' or i == page_obj.number|add:'3' %}
+                                {% elif i == page_obj.number|add('-3') or i == page_obj.number|add('3') %}
                                     <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
                                 {% endif %}
                             {% endfor %}
                             {% if page_obj.has_next %}
                                 <li class="page-item">
-                                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.industry %}&industry={{ request.GET.industry }}{% endif %}"
+                                    <a href="?page={{ page_obj.next_page_number }}{% if request_get.industry %}&industry={{ request_get.industry }}{% endif %}"
                                        class="page-link">&raquo;</a>
                                 </li>
                             {% else %}

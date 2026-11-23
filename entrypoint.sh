@@ -1,5 +1,6 @@
 #!/bin/bash
+# Bring the schema up to date, then serve the application.
+set -euo pipefail
 
-python manage.py migrate
-python manage.py runserver 0.0.0.0:8000
-#/usr/local/bin/gunicorn jobs.wsgi:application -w 2 -b :8000
+alembic upgrade head
+exec uvicorn app.main:app --host 0.0.0.0 --port 8000
